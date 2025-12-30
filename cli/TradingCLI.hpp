@@ -1,19 +1,11 @@
-#ifndef TRADING_CLI_HPP
-#define TRADING_CLI_HPP
-
-#include "../engine/TradingEngine.hpp"
-#include <memory>
+#pragma once
+#include "engine/TradingEngine.hpp"
 
 class TradingCLI {
 public:
-    TradingCLI(std::unique_ptr<TradingEngine> engine);
-
-    void run();
+    TradingCLI(TradingEngine&);
+    void start();
 
 private:
-    void processCommand(const std::string& command);
-
-    std::unique_ptr<TradingEngine> engine_;
+    TradingEngine& engine_;
 };
-
-#endif // TRADING_CLI_HPP
