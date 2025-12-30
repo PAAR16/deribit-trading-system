@@ -1,23 +1,14 @@
-#ifndef TRADING_ENGINE_HPP
-#define TRADING_ENGINE_HPP
-
-#include "../api/IDeribitApi.hpp"
-#include "../core/Order.hpp"
+#pragma once
 #include <memory>
-#include <vector>
+#include "api/IDeribitApi.hpp"
 
 class TradingEngine {
 public:
-    TradingEngine(std::unique_ptr<IDeribitApi> api);
-
-    void start();
-    void stop();
-    void placeOrder(const Order& order);
-    void cancelOrder(int orderId);
+    TradingEngine();
+    void connect(bool testnet);
+    void authenticate(const std::string&, const std::string&);
+    void submitOrder(const Order&);
 
 private:
     std::unique_ptr<IDeribitApi> api_;
-    std::vector<Order> orders_;
 };
-
-#endif // TRADING_ENGINE_HPP
