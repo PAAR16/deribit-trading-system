@@ -232,4 +232,60 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## Architecture Overview
+
+```mermaid
+graph TB
+    A[CLI Layer<br/>TradingCLI] --> B[Engine Layer<br/>TradingEngine]
+    B --> C[API Layer<br/>IDeribitApi]
+    C --> D[WebSocket Client<br/>DeribitWsClient]
+    B --> E[Core Layer<br/>Order, Position,<br/>AccountSummary]
+    D --> F[Deribit Exchange<br/>WebSocket API]
+    B --> G[Infra Layer<br/>Logger]
+
+    A --> H[Command Pattern<br/>BuyCommand,<br/>SellCommand, etc.]
+
+    I[Strategy Pattern<br/>TradingStrategy] -.-> B
+
+    classDef layer fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef external fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef pattern fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+
+    class A,B,C,E,G layer
+    class F external
+    class H,I pattern
+```
+
+### Data Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant C as TradingCLI
+    participant E as TradingEngine
+    participant A as DeribitWsClient
+    participant D as Deribit API
+
+    U->>C: Enter command (e.g., "buy BTC 1.0 50000")
+    C->>E: executeCommand()
+    E->>A: placeOrder(order)
+    A->>D: WebSocket request
+    D-->>A: Response
+    A-->>E: Callback with result
+    E-->>C: Display result
+    C-->>U: Show response
+```
+
+### Component Responsibilities
+
+| Component | Responsibility | Key Classes |
+|-----------|----------------|-------------|
+| **CLI** | User interaction, command parsing | `TradingCLI`, `Command`, `BuyCommand` |
+| **Engine** | Business logic, orchestration | `TradingEngine`, `TradingStrategy` |
+| **API** | External communication | `IDeribitApi`, `DeribitWsClient` |
+| **Core** | Domain models | `Order`, `Position`, `AccountSummary` |
+| **Infra** | Cross-cutting concerns | `Logger` |
+
+---
+
 **Note**: This is an educational project. For production trading systems, consider using established libraries and frameworks with proper security audits.
